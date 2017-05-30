@@ -40,7 +40,7 @@ angular.module('ngSwippy', ['ngTouch'])
 	  }
 
 	  return {
-	   
+
 	    bind: function(element, eventHandlers, pointerTypes) {
 
 	      var totalX, totalY;
@@ -82,7 +82,7 @@ angular.module('ngSwippy', ['ngTouch'])
 	        if (totalX < MOVE_BUFFER_RADIUS && totalY < MOVE_BUFFER_RADIUS) {
 	          return;
 	        }
-	          
+
 	          eventHandlers['move'] && eventHandlers['move'](coords, event); // jshint ignore:line
 
 	      });
@@ -100,7 +100,7 @@ angular.module('ngSwippy', ['ngTouch'])
 			restrict: 'E',
 			replace: true,
 			template: 	'<div class="ng-swippy noselect" style="width: {{width}}; height: {{height}}">'+
-							'<div person="person" swipe-directive="swipe-directive" ng-repeat="person in peopleToShow" class="content-wrapper swipable-card">' +
+							'<div person="person" swipe-directive="swipe-directive" ng-repeat="person in peopleToShow" class="content-wrapper swipable-card" ng-click="current($index, $event)">' +
   								'<div class="card">' +
     								'<div style="background: url({{person.thumbnail}}) no-repeat 50% 15%" class="photo-item"></div>' +
     								'<div class="know-label">{{labelOk ? labelOk : "YES"}}</div>' +
@@ -116,7 +116,7 @@ angular.module('ngSwippy', ['ngTouch'])
 								'</div>' +
 							'</div>' +
 						'</div>',
-			
+
 			scope: {
 				collection: '=',
 				width: '@',
@@ -128,13 +128,18 @@ angular.module('ngSwippy', ['ngTouch'])
 				swipeRight: '&',
 				cardsNumber: '@',
 				labelOk: '@',
-				labelNegative: '@'
+				labelNegative: '@',
+				currentClick : '='
 			},
 
 			link: function(scope){
 
 				scope.isMoving = false;
 				scope.moveBack = false;
+				scope.current = function(index, event) {
+					scope.currentClick = index
+					event.preventDefault();
+				};
 
 				scope.init = function(){
 					scope.people = scope.collection.slice(0);
@@ -144,7 +149,7 @@ angular.module('ngSwippy', ['ngTouch'])
 					if (number && number >= 2 && Math.abs(number) <= scope.peopleBuf.length){
 						showNumber = Math.abs(number);
 					}
-					scope.peopleToShow = scope.peopleBuf.splice(-showNumber);	
+					scope.peopleToShow = scope.peopleBuf.splice(-showNumber);
 				};
 
 				scope.removeElementFromCollection = function(person, direction){
@@ -242,7 +247,7 @@ angular.module('ngSwippy', ['ngTouch'])
 							if ((Date.now() - timeoutStart) < 50) {
 								return;
 							} else {
- 
+
 								scope.swipeObject.offsetX = coordinates.x - scope.swipeObject.startX;
 								scope.swipeObject.offsetY = coordinates.y - scope.swipeObject.startY;
 
@@ -258,7 +263,7 @@ angular.module('ngSwippy', ['ngTouch'])
 								if (scope.swipeObject.offsetX <= 0){
 									labelx = '60%';
 								}
-								
+
 								if (scope.swipeObject.offsetX > 0){
 									$labelunknown.style['opacity'] = '0';
 									$labelknow.style['opacity'] = opacity;
@@ -301,7 +306,7 @@ angular.module('ngSwippy', ['ngTouch'])
 						if (Math.abs(scope.swipeObject.offsetX / screenWidth) > 0.200 || Math.abs(scope.swipeObject.offsetY / screenHeight) > 0.100) {
 							var style;
 							var y = 100;
-							
+
 							var x = window.innerWidth / element[0].offsetWidth * 100;
 
 								if (scope.swipeObject.offsetX < 0 && scope.swipeObject.offsetY < 0){
@@ -327,17 +332,17 @@ angular.module('ngSwippy', ['ngTouch'])
 								}
 
 							element.css(style);
-							
+
 							var direction = scope.swipeObject.offsetX < 0 ? 'left' : 'right';
 
 							swipeDirectiveValues.moveBack = false;
-							
+
 							scope.swipeObject.offsetX = 0;
 							scope.swipeObject.offsetY = 0;
 							console.log('Here we set false');
 							scope.$parent.isMoving = false;
 
-							$timeout(function(){			
+							$timeout(function(){
 								scope.$parent.removeElementFromCollection(scope.person, direction);
 							}, 500);
 						} else {
