@@ -49,6 +49,7 @@ In your html markup write
 * **cards-number** - (optional) Number of cards to load in the DOM. By default - 3.
 * **label-ok** - (optional) Green label that describes current action
 * **label-negative** - (optional) Red label that describes current action
+* **current-click** - (optional) two ways data binding var that hold the current item
 
 ## Collection structure
 
